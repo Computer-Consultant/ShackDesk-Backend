@@ -30,10 +30,14 @@ The telemetry Worker explicitly does not store:
 
 Rate limiting is enforced at the Cloudflare zone level, not in Worker code. This avoids any need to track or store client IPs. Configure rate limiting rules in the Cloudflare dashboard under **Security → WAF → Rate Limiting Rules**.
 
-Recommended rule:
-- Path: `/report`
-- Threshold: 30 requests per minute per IP
-- Action: Block for 1 minute
+Current rule (Cloudflare free tier — 10-second window is the minimum available):
+- Expression: `http.request.uri.path eq "/report"`
+- Threshold: 10 requests per 10 seconds per IP
+- Action: Block for 10 seconds
+
+Note: The free tier allows 1 rate limiting rule per account. If additional Workers are added,
+update the rule expression to match `http.host eq "telemetry.shackdesk.com"` to cover all
+routes on the subdomain. See [MAINTENANCE.md](MAINTENANCE.md) for details.
 
 ### Input Validation
 

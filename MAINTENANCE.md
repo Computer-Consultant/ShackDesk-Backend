@@ -73,7 +73,17 @@ Rate limiting is not in code — it is configured in the Cloudflare dashboard.
 
 **Location:** Cloudflare Dashboard → shackdesk.com zone → **Security → WAF → Rate Limiting Rules**
 
-Recommended rule for `/report`:
+**Free tier limit: 1 rule per account** (not per zone). The current rule is scoped to the
+`/report` path. If additional Workers or routes are added in the future, consider updating
+the rule expression to match the entire `telemetry.shackdesk.com` hostname instead:
+
+- Broader expression: `http.host eq "telemetry.shackdesk.com"`
+
+This covers all current and future routes on that subdomain without needing additional rules.
+If Workers on other subdomains also need rate limiting, combine them with `or` in the same
+rule, or upgrade to Pro (5 rules).
+
+Current rule:
 - Expression: `http.request.uri.path eq "/report"`
-- Threshold: 30 requests per 60 seconds
-- Action: Block (duration: 60 seconds)
+- Threshold: 10 requests per 10 seconds per IP (free tier minimum window)
+- Action: Block for 10 seconds
