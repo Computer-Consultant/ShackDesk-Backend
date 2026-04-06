@@ -1,0 +1,19 @@
+# Wrangler local state and dev database
+.wrangler/
+
+# Local secrets — never commit this file
+# See README.md for the required format
+.dev.vars
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# AI assistant working files
+CLAUDE.md
+.claude/
+*.claude
