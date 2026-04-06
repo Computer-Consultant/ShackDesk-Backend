@@ -20,6 +20,67 @@ The `CF_API_TOKEN` GitHub Actions secret authorises Wrangler to deploy Workers.
 **Database name:** `shackdesk-telemetry`
 **Database ID:** `e77c8a3d-cba7-4326-846c-faeb2c585da0`
 
+### Viewing telemetry data
+
+There are two options for querying data without building a dashboard:
+
+---
+
+#### Option 1 — Wrangler CLI
+
+Run SQL queries directly from the terminal. Best for ad-hoc lookups and one-off investigations.
+
+```bash
+# Most recent 20 reports
+wrangler d1 execute shackdesk-telemetry --remote \
+  --command="SELECT * FROM reports ORDER BY received_at DESC LIMIT 20;"
+
+# All crash events
+wrangler d1 execute shackdesk-telemetry --remote \
+  --command="SELECT id, app, version, os, props, received_at FROM reports WHERE event = 'crash' ORDER BY received_at DESC;"
+
+# Crash count by app version
+wrangler d1 execute shackdesk-telemetry --remote \
+  --command="SELECT app, version, COUNT(*) as crashes FROM reports WHERE event = 'crash' GROUP BY app, version ORDER BY crashes DESC;"
+
+# Event breakdown by app
+wrangler d1 execute shackdesk-telemetry --remote \
+  --command="SELECT app, event, COUNT(*) as total FROM reports GROUP BY app, event ORDER BY app, total DESC;"
+
+# Reports from the last 7 days
+wrangler d1 execute shackdesk-telemetry --remote \
+  --command="SELECT * FROM reports WHERE received_at > datetime('now', '-7 days') ORDER BY received_at DESC;"
+
+# OS version distribution
+wrangler d1 execute shackdesk-telemetry --remote \
+  --command="SELECT os, COUNT(*) as total FROM reports GROUP BY os ORDER BY total DESC;"
+```
+
+---
+
+#### Option 2 — Cloudflare D1 Studio (web UI)
+
+A built-in SQL console in the Cloudflare dashboard — no setup required.
+
+1. Cloudflare Dashboard → **Workers & Pages → D1**
+2. Click **shackdesk-telemetry**
+3. Click the **Console** tab
+4. Type and run any SQL query directly in the browser
+
+D1 Studio supports the same queries as the CLI above. Results are displayed as a table.
+Useful for quick browsing without opening a terminal.
+
+---
+
+#### Option 3 — Analytics dashboard (planned)
+
+A future Worker in this repo (`workers/dashboard/`) will serve an authenticated web UI
+with aggregate views — crash trends by version, event totals, OS distribution charts.
+It will query D1 directly and require a bearer token to access, keeping the data private
+while keeping the code public and auditable.
+
+---
+
 ### Query the database
 ```bash
 wrangler d1 execute shackdesk-telemetry --remote --command="SELECT * FROM reports ORDER BY received_at DESC LIMIT 20;"
