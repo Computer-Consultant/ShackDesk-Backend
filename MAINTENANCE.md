@@ -74,10 +74,24 @@ Useful for quick browsing without opening a terminal.
 
 #### Option 3 — Analytics dashboard (planned)
 
-A future Worker in this repo (`workers/dashboard/`) will serve an authenticated web UI
-with aggregate views — crash trends by version, event totals, OS distribution charts.
-It will query D1 directly and require a bearer token to access, keeping the data private
-while keeping the code public and auditable.
+The Reports Worker in `workers/reports/` serves an authenticated web UI with aggregate
+views, recent reports, filters, report detail, event totals, known installs, total runs,
+and crash counts by app/version. It queries D1 directly and uses HTTP Basic Auth.
+
+Total runs are counted from `app_start` events. Known installs are counted from distinct
+anonymous install identifiers in `props`, using common keys such as `install_id`,
+`installation_id`, `installId`, `installationId`, `client_id`, `clientId`,
+`anonymous_id`, `anonymousId`, `support_id`, or `supportId`.
+
+Reports Worker routes:
+
+- `GET /` - private HTML dashboard
+- `GET /api/summary` - aggregate counts and breakdowns
+- `GET /api/options` - distinct filter values
+- `GET /api/reports` - filtered report rows
+- `GET /api/reports/:id` - single report detail
+
+All Reports Worker API routes are read-only.
 
 ---
 
@@ -109,6 +123,26 @@ Schema changes require a migration file. Never alter the live schema directly wi
 2. Add a new `[[routes]]` block and any bindings to `wrangler.toml`
 3. If the new Worker needs its own D1 database, create it: `wrangler d1 create <db-name>`
 4. Add a deploy step to `.github/workflows/deploy.yml` if it needs a separate pipeline
+
+## Reports Worker Setup
+
+The Reports Worker has a separate Wrangler config:
+
+```bash
+wrangler deploy --config wrangler.reports.toml
+```
+
+Set the Basic Auth credentials as Cloudflare Worker secrets:
+
+```bash
+wrangler secret put REPORTS_USERNAME --config wrangler.reports.toml
+wrangler secret put REPORTS_PASSWORD --config wrangler.reports.toml
+```
+
+Do not store these values in the repo.
+
+The `reports.shackdesk.com` DNS record must be proxied in Cloudflare. Wrangler registers
+the Worker route from `wrangler.reports.toml` during deployment.
 
 ## Local Development
 

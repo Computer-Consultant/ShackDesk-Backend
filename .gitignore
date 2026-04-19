@@ -13,7 +13,9 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
-# AI assistant working files
+# Local tool working files
+.codex
+.codex/
 CLAUDE.md
 .claude/
 *.claude

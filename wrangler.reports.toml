@@ -1,0 +1,12 @@
+name = "shackdesk-reports"
+main = "workers/reports/src/index.js"
+compatibility_date = "2025-04-06"
+
+[[routes]]
+pattern = "reports.shackdesk.com/*"
+zone_name = "shackdesk.com"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "shackdesk-telemetry"
+database_id = "e77c8a3d-cba7-4326-846c-faeb2c585da0"

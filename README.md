@@ -15,6 +15,17 @@ Accepts anonymous telemetry reports from ShackDesk apps via `POST https://teleme
 
 See [PRIVACY.md](PRIVACY.md) for the full data policy.
 
+### Reports Worker (`workers/reports/`)
+
+Provides a private read-only dashboard and JSON API for reviewing reports stored in the
+existing `shackdesk-telemetry` D1 database.
+
+- Served separately from the public telemetry intake Worker
+- Protected with HTTP Basic Auth
+- Uses Cloudflare Worker secrets for credentials
+- Reads from D1 only; it does not modify telemetry records
+- Tracks known installs when reports include an anonymous install identifier in `props`
+
 ## Architecture
 
 ```
@@ -71,9 +82,14 @@ curl -X POST http://localhost:8787/report \
 
 Deployment is automatic on push to `main` via GitHub Actions (see `.github/workflows/deploy.yml`).
 
-Manual deployment:
+Manual telemetry deployment:
 ```
 wrangler deploy
+```
+
+Manual reports deployment:
+```
+wrangler deploy --config wrangler.reports.toml
 ```
 
 **Required GitHub Secrets:**
@@ -85,9 +101,18 @@ wrangler deploy
 
 See [MAINTENANCE.md](MAINTENANCE.md) for how to create and rotate these.
 
+**Required Reports Worker secrets:**
+
+```
+wrangler secret put REPORTS_USERNAME --config wrangler.reports.toml
+wrangler secret put REPORTS_PASSWORD --config wrangler.reports.toml
+```
+
 ## DNS
 
 `telemetry.shackdesk.com` must have a DNS CNAME record in the Cloudflare zone pointing at the Worker route. This is managed via `wrangler.toml` — Wrangler registers the route automatically on deploy. The DNS record must be proxied (orange cloud) in the Cloudflare dashboard.
+
+`reports.shackdesk.com` must also have a proxied DNS record in the Cloudflare zone. The Worker route is managed via `wrangler.reports.toml`.
 
 ## Repo Structure
 
@@ -97,7 +122,14 @@ ShackDesk-Backend/
     telemetry/
       src/
         index.js          # Worker entry point
+    reports/
+      src/
+        index.js          # Reports Worker entry point
+        auth.js           # Basic Auth helper
+        queries.js        # D1 read-only queries
+        html.js           # Dashboard HTML
   wrangler.toml           # Cloudflare Worker config
+  wrangler.reports.toml   # Reports Worker config
   .github/
     workflows/
       deploy.yml          # CI deployment pipeline

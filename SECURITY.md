@@ -39,6 +39,17 @@ Note: The free tier allows 1 rate limiting rule per account. If additional Worke
 update the rule expression to match `http.host eq "telemetry.shackdesk.com"` to cover all
 routes on the subdomain. See [MAINTENANCE.md](MAINTENANCE.md) for details.
 
+### Reports Worker Access
+
+The private Reports Worker is protected with HTTP Basic Auth. Credentials are configured
+as Cloudflare Worker secrets:
+
+- `REPORTS_USERNAME`
+- `REPORTS_PASSWORD`
+
+Do not commit credentials to the repo. All reports API routes are read-only and require
+authentication, except `/health`.
+
 ### Input Validation
 
 All incoming payloads are validated for:
