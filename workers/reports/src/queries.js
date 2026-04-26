@@ -89,7 +89,8 @@ export async function getReports(db, searchParams) {
   const limit = clampLimit(searchParams.get("limit"));
 
   const rows = await db.prepare(`
-    SELECT id, app, version, event, os, props, client_timestamp, received_at
+    SELECT id, app, version, event, os, props, client_timestamp, received_at,
+           ${INSTALL_ID_EXPR} AS install_id
     FROM reports
     ${whereSql}
     ORDER BY received_at DESC
@@ -101,7 +102,8 @@ export async function getReports(db, searchParams) {
 
 export async function getReportById(db, id) {
   const row = await db.prepare(`
-    SELECT id, app, version, event, os, props, client_timestamp, received_at
+    SELECT id, app, version, event, os, props, client_timestamp, received_at,
+           ${INSTALL_ID_EXPR} AS install_id
     FROM reports
     WHERE id = ?
   `).bind(id).first();
@@ -173,6 +175,7 @@ function normalizeRows(rows) {
 function normalizeReport(row) {
   return {
     id: row.id,
+    installId: row.install_id ?? null,
     app: row.app,
     version: row.version,
     event: row.event,

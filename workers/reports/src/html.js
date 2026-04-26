@@ -311,7 +311,7 @@ export function renderDashboard() {
                 <th>Version</th>
                 <th>Event</th>
                 <th>OS</th>
-                <th>ID</th>
+                <th>Install ID</th>
               </tr>
             </thead>
             <tbody id="reportsBody"></tbody>
@@ -423,7 +423,7 @@ export function renderDashboard() {
           '<td>' + escapeHtml(report.version) + '</td>' +
           '<td class="' + eventClass + '">' + escapeHtml(report.event) + '</td>' +
           '<td>' + escapeHtml(report.os || "") + '</td>' +
-          '<td>' + escapeHtml(report.id) + '</td>' +
+          '<td>' + escapeHtml(report.installId || "") + '</td>' +
         '</tr>';
       }).join("");
     }
