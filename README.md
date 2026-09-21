@@ -10,7 +10,7 @@ Accepts anonymous telemetry reports from ShackDesk apps via `POST https://teleme
 
 - No IP addresses stored
 - No personally identifiable information collected
-- Opt-in only — users must explicitly enable telemetry in the app
+- Opt-in only — nothing is sent until the user confirms the choice on first launch or in Settings
 - All data retained for 90 days maximum
 
 See [PRIVACY.md](PRIVACY.md) for the full data policy.

@@ -1,6 +1,6 @@
 # Privacy Policy — ShackDesk Backend
 
-**Last updated:** 2026-04-06
+**Last updated:** 2026-09-21
 
 This document describes what data the ShackDesk backend services collect, store, and retain. It is intended to be read alongside the privacy policy of each ShackDesk application.
 
@@ -31,7 +31,7 @@ When a ShackDesk application sends a telemetry report, the following fields are 
 
 ### Opt-in only
 
-Telemetry is disabled by default in all ShackDesk applications. Users must explicitly enable it in Settings. It can be disabled at any time.
+Nothing is sent until the user has agreed. Each ShackDesk application asks on first launch whether it may send anonymous diagnostic reports. On alpha and beta test builds the option is pre-selected in that dialog, because test-build feedback is where the data matters most, but no report is sent until the user confirms the choice; on stable releases it is unselected. The choice can be changed at any time in the application's Settings, and each application lets the user view every report it has sent.
 
 ## Data Storage and Retention
 
